@@ -1,67 +1,47 @@
-// const db = require('../utils/database');
-// const Cart = require('./cart');
+const mongodb = require('mongodb');
+const getDb = require('../utils/database').getDb;
 
-// module.exports = class Product {
-//   constructor(id, title, imageUrl, description, price) {
-//     this.id = id;
-//     this.title = title;
-//     this.description = description;
-//     this.imageUrl = imageUrl;
-//     this.price = price;
-//   }
+class Product {
+  constructor(title, price, description, imageUrl) {
+    this.title = title;
+    this.price = price;
+    this.description = description;
+    this.imageUrl = imageUrl;
+  }
 
-//   save() {
-//     return db.execute('INSERT INTO products (title,price,imageUrl,description) VALUES (?,?,?,?)',
-//     [this.title, this.price, this.imageUrl, this.description]);
-//   }
+  save() {
+    const db = getDb();
+    return db
+      .collection('products')
+      .insertOne(this)
+      .then(console.log)
+      .catch(console.log);
+  }
 
-//   static deleteById(id) {
-//     getProductsFromFile((products) => {
-//       const product = product.find((prod) => prod.id === id);
-//       const updatedProducts = products.filter((p) => p.id !== id);
-//       fs.writeFile(p, JSON.stringify(updatedProducts), (err) => {
-//         if (!err) {
-//           Cart.deleteProduct(id, product.price);
-//         }
-//       });
-//     });
-//   }
+  static fetchAll() {
+    return db
+      .collection('products')
+      .find()
+      .toArray()
+      .then((products) => {
+        console.log(products);
+        return products;
+      })
+      .catch(console.log);
+  }
 
-//   static fetchAll() {
-//     return db.execute('SELECT * FROM products');
-//   }
-
-//   static findeById(id) {
-//     return db.execute('SELECT * FROM products WHERE products.id = ?',[id]);
-//   }
-// };
-const Sequelize = require('sequelize');
-
-const sequelize = require('../utils/database');
-
-const Product = sequelize.define('product', {
-  id: {
-    type: Sequelize.INTEGER,
-    autoIncrement: true,
-    allowNul: false,
-    primaryKey: true,
-  },
-  title: {
-    type: Sequelize.STRING,
-    allowNul: false,
-  },
-  price: {
-    type: Sequelize.DOUBLE,
-    allowNul: false,
-  },
-  imageUrl: {
-    type: Sequelize.STRING,
-    allowNul: false,
-  },
-  description: {
-    type: Sequelize.STRING,
-    allowNul: false,
-  },
-});
+  static findById(prodId) {
+    const db = getDb();
+    return db
+      .collection('products')
+      .find({ _id: new mongodb.ObjectID(prodId) })
+      .next()
+      .then((product) => {
+        console.log(product);
+        return product;
+      })
+      .catch(console.log);
+  }
+}
 
 module.exports = Product;
