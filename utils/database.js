@@ -5,9 +5,10 @@ let _db;
 
 const mongoConnect = (callBack) => {
   MongoClient.connect(
-    'mongodb+srv://shopUser:zaq1xsw2@shop-cluster.ex40w.mongodb.net/Shop-Cluster?retryWrites=true&w=majority'
+    'mongodb+srv://shopUser:zaq1xsw2@shop-cluster.ex40w.mongodb.net/shopApp?retryWrites=true&w=majority',
+    { useUnifiedTopology: true }
   )
-    .then((result) => {
+    .then((client) => {
       _db = client.db();
       console.log('connected');
       callBack();
