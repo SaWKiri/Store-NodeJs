@@ -22,8 +22,11 @@ app.use((req, res, next) => {
   console.log('getting user');
   User.findById('5f33fe870356b4e247e31063')
     .then((user) => {
-      console.log(user);
-      req.user = new User(user.name, user.email, user.cart, user._id);
+      if (user !== null) {
+        req.user = new User(user.name, user.email, user.cart, user._id);
+      } else {
+        console.log('please create new user in db manually adn update id in code(above)')
+      }
       next();
     })
     .catch(console.log);
