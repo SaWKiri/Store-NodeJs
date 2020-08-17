@@ -25,6 +25,7 @@ class Product {
   }
 
   static fetchAll() {
+    const db = getDb();
     return db
       .collection('products')
       .find()
@@ -49,7 +50,7 @@ class Product {
       .catch(console.log);
   }
 
-  static deleteById() {
+  static deleteById(prodId) {
     const db = getDb();
     return db
       .collection('products')
